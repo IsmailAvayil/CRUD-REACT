@@ -1,47 +1,74 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../contexts/AppContext";
 import { API_KEY } from "../../constants/constants";
 import Axios from "../../Axios";
-import { Link } from "react-router-dom";
-import { AppContext } from "../../contexts/AppContext";
+import { Link, useNavigate } from "react-router-dom";
 
-function AddNewUser() {
-  const { users, setUsers, newUser, setNewUser } = useContext(AppContext);
+const UpdateUserPage = () => {
+  const navigate = useNavigate();
+  const { users, setUsers, updateUserId } = useContext(AppContext);
+  console.log(updateUserId);
+  const [updateUser, setUpdateUser] = useState({
+    name: "",
+    email: "",
+    gender: "",
+    status: "",
+  });
 
-  const handleInputChange = (event) => {
-    setNewUser({ ...newUser, [event.target.name]: event.target.value });
-  };
-
-  const handleGenderChange = (event) => {
-    setNewUser({ ...newUser, gender: event.target.value });
-  };
-  const handleStatusChange = (event) => {
-    setNewUser({ ...newUser, status: event.target.value });
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const postData = newUser;
-    try {
-      const response = await Axios.post("public/v2/users", postData, {
+  useEffect(() => {
+    if (updateUserId) {
+      Axios.get("public/v2/users/" + updateUserId, {
         headers: {
           Authorization: API_KEY,
         },
-      });
-      console.log(response);
-      setUsers([...users, response.data]);
-      alert("Succesfully Added!");
-      setNewUser({ name: "", email: "", gender: "", status: "" });
-    } catch (error) {
-      console.error("Error fetching user list:", error);
+      })
+        .then((response) => {
+          console.log(response);
+          console.log(updateUser);
+          setUpdateUser({
+            ...updateUser,
+            name: response.data.name,
+            email: response.data.email,
+            gender: response.data.gender,
+            status: response.data.gender,
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching user list:", error);
+        });
     }
+  }, []);
+  const handleInputChange = (event) => {
+    setUpdateUser({ ...updateUser, [event.target.name]: event.target.value });
   };
-
+  const handleGenderChange = (event) => {
+    setUpdateUser({ ...updateUser, gender: event.target.value });
+  };
+  const handleStatusChange = (event) => {
+    setUpdateUser({ ...updateUser, status: event.target.value });
+  };
+  const handleUpdate = (event) => {
+    event.preventDefault();
+    Axios.put(`public/v2/users/${updateUserId}`, updateUser, {
+      headers: {
+        Authorization: API_KEY,
+      },
+    })
+      .then((response) => {
+        setUsers([...users, response.data]);
+        alert("Succesfuly updated!");
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error fetching user list:", error);
+      });
+  };
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="update-container">
+      <form onSubmit={handleUpdate}>
         <div className="ui inverted segment">
           <div className="ui segment" style={{ textAlign: "center" }}>
-            <h3>Add New User</h3>
+            <h3>Update Details</h3>
           </div>
           <div className="ui inverted form">
             <div className="two fields">
@@ -50,7 +77,7 @@ function AddNewUser() {
                 <input
                   placeholder="Name"
                   type="text"
-                  value={newUser.name}
+                  value={updateUser.name}
                   name="name"
                   onChange={handleInputChange}
                 />
@@ -60,7 +87,7 @@ function AddNewUser() {
                 <input
                   placeholder="Email"
                   type="email"
-                  value={newUser.email}
+                  value={updateUser.email}
                   name="email"
                   onChange={handleInputChange}
                 />
@@ -112,11 +139,11 @@ function AddNewUser() {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="two field">
               <button type="submit" className="btn btn-success">
-                Submit
+                Update
               </button>
-              <Link to="/" type="button" className="btn btn-secondary">
+              <Link to="/" className="btn btn-secondary">
                 Back
               </Link>
             </div>
@@ -125,6 +152,6 @@ function AddNewUser() {
       </form>
     </div>
   );
-}
+};
 
-export default AddNewUser;
+export default UpdateUserPage;

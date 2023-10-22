@@ -1,29 +1,28 @@
-import React, { useContext, useEffect } from 'react';
-import { AppContext } from '../../contexts/AppContext';
-import axios from '../../axios';
-import { API_KEY } from '../../constants/constants';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from "react";
+import { AppContext } from "../../contexts/AppContext";
+import Axios from "../../Axios";
+import { API_KEY } from "../../constants/constants";
+import { Link } from "react-router-dom";
 
 const UserDetailsPage = () => {
-  const { userId, currentUser, setCurrentUser } = useContext(AppContext)
+  const { userId, currentUser, setCurrentUser } = useContext(AppContext);
   useEffect(() => {
-    axios.get(`public/v2/users/${userId}`, {
-      headers: {
-        Authorization: API_KEY,
-      }
-    })
-      .then(response => {
-        setCurrentUser(response.data)
+    Axios
+      .get(`public/v2/users/${userId}`, {
+        headers: {
+          Authorization: API_KEY,
+        },
       })
-      .catch(error => {
-        console.error('Error fetching user list:', error);
+      .then((response) => {
+        setCurrentUser(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching user list:", error);
       });
   }, [userId]);
 
-
-
   return (
-    <div className='details-container '>
+    <div className="details-container ">
       <div className="ui inverted segment">
         <div className="ui segment" style={{ textAlign: "center" }}>
           <h3>{currentUser.name}'s Details</h3>
@@ -45,11 +44,14 @@ const UserDetailsPage = () => {
             <label>STATUS</label>
             <p>{currentUser.status}</p>
           </div>
-          <Link to="/" type="button" className="btn btn-secondary" >Back</Link>
+          <Link to="/" type="button" className="btn btn-secondary">
+            Back
+          </Link>
         </div>
-      </div>`
+      </div>
+      `
     </div>
-  )
-}
+  );
+};
 
-export default UserDetailsPage
+export default UserDetailsPage;
