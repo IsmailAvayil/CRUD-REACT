@@ -1,0 +1,13 @@
+.crud-operations{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:800px;
+}
+@media (max-width:450px){
+  .crud-operations{
+    width: 310px;
+    margin: auto;
+  }
+}

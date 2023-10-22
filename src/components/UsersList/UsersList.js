@@ -1,6 +1,6 @@
 import { API_KEY } from "../../constants/constants";
 import Axios from "../../Axios";
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext} from "react";
 import { AppContext } from "../../contexts/AppContext";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "../Pagination/Pagination";
