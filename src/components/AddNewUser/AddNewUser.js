@@ -22,19 +22,25 @@ function AddNewUser() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const postData = newUser;
-    try {
-      const response = await Axios.post("public/v2/users", postData, {
-        headers: {
-          Authorization: API_KEY,
-        },
-      });
-      console.log(response);
-      setUsers([...users, response.data]);
-      alert("Succesfully Added!");
-      setNewUser({ name: "", email: "", gender: "", status: "" });
-    } catch (error) {
-      console.error("Error fetching user list:", error);
+    if(postData.name && postData.email && postData.gender && postData.status){
+      try {
+        const response = await Axios.post("public/v2/users", postData, {
+          headers: {
+            Authorization: API_KEY,
+          },
+        });
+        console.log(response);
+        setUsers([...users, response.data]);
+        alert("Succesfully Added!");
+        setNewUser({ name: "", email: "", gender: "", status: "" });
+      } catch (error) {
+        console.error("Error fetching user list:", error);
+      }
     }
+    else{
+      alert("Not filled Every Columns,so not added")
+    }
+
   };
 
   return (
