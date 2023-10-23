@@ -7,12 +7,11 @@ import { Link } from "react-router-dom";
 const UserDetailsPage = () => {
   const { userId, currentUser, setCurrentUser } = useContext(AppContext);
   useEffect(() => {
-    Axios
-      .get(`public/v2/users/${userId}`, {
-        headers: {
-          Authorization: API_KEY,
-        },
-      })
+    Axios.get(`public/v2/users/${userId}`, {
+      headers: {
+        Authorization: API_KEY,
+      },
+    })
       .then((response) => {
         setCurrentUser(response.data);
       })

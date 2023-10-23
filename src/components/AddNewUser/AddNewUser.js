@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
 
 function AddNewUser() {
-  const { users, setUsers, newUser, setNewUser } = useContext(AppContext);
+  const { users, linkStyle, setUsers, newUser, setNewUser } =
+    useContext(AppContext);
 
   const handleInputChange = (event) => {
     setNewUser({ ...newUser, [event.target.name]: event.target.value });
@@ -114,11 +115,10 @@ function AddNewUser() {
             </div>
             <div>
               <button type="submit" className="btn btn-success">
-                Submit
+                <Link style={linkStyle} to="/">
+                  Submit
+                </Link>
               </button>
-              <Link to="/" type="button" className="btn btn-secondary">
-                Back
-              </Link>
             </div>
           </div>
         </div>

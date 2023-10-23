@@ -1,14 +1,13 @@
 import { API_KEY } from "../../constants/constants";
 import Axios from "../../Axios";
-import { useEffect, useContext} from "react";
+import { useEffect, useContext } from "react";
 import { AppContext } from "../../contexts/AppContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Pagination from "../Pagination/Pagination";
 
 const UserListPage = () => {
-  const { users, setUsers, setUserId, setUpdateUserId, page } =
+  const { users, setUsers, setUserId, updatingUser, setUpdatingUser, page } =
     useContext(AppContext);
-  const navigate = useNavigate();
 
   const per_page = 4;
   useEffect(() => {
@@ -31,7 +30,7 @@ const UserListPage = () => {
   };
 
   const handleDelete = (id) => {
-    const unDeleteUsers = users.filter((obj) => obj.id != id);
+    const unDeleteUsers = users.filter((obj) => obj.id !== id);
     console.log(id);
     Axios.delete(`public/v2/users/${id}`, {
       headers: {
@@ -42,15 +41,23 @@ const UserListPage = () => {
         console.log(response);
         alert(`Deleted Succesfully!`);
         setUsers(unDeleteUsers);
-        navigate("/");
       })
       .catch((error) => {
         console.error("Error deleting data:", error);
       });
   };
 
-  const handleUpdate = (id) => {
-    setUpdateUserId(id);
+  const handleUpdate = (
+    updatingUserId,
+    updatingUserName,
+    updatingUserEmail
+  ) => {
+    setUpdatingUser({
+      ...updatingUser,
+      id: updatingUserId,
+      name: updatingUserName,
+      email: updatingUserEmail,
+    });
   };
   return (
     <div className="userslist-container">
@@ -74,7 +81,7 @@ const UserListPage = () => {
           </tr>
         </thead>
         {users &&
-          users.map((user, index) => (
+          users.map((user) => (
             <tbody key={user.id} className="table-group-divider">
               <tr>
                 <td>{user.name}</td>
@@ -84,7 +91,7 @@ const UserListPage = () => {
                     type="button"
                     className="btn btn-info"
                     onClick={() => {
-                      handleUpdate(user.id);
+                      handleUpdate(user.id, user.name, user.email);
                     }}
                   >
                     Edit

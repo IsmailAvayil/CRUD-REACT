@@ -1,68 +1,75 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "../../contexts/AppContext";
 import { API_KEY } from "../../constants/constants";
 import Axios from "../../Axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const UpdateUserPage = () => {
-  const navigate = useNavigate();
-  const { users, setUsers, updateUserId } = useContext(AppContext);
-  console.log(updateUserId);
-  const [updateUser, setUpdateUser] = useState({
-    name: "",
-    email: "",
-    gender: "",
-    status: "",
-  });
-
+const UpdateUser = () => {
+  const {
+    users,
+    linkStyle,
+    setUsers,
+    updatingUser,
+    newUpdateUser,
+    setNewUpdateUser,
+  } = useContext(AppContext);
+  var clickedId = updatingUser.id;
+  console.log(clickedId);
   useEffect(() => {
-    if (updateUserId) {
-      Axios.get("public/v2/users/" + updateUserId, {
-        headers: {
-          Authorization: API_KEY,
-        },
-      })
-        .then((response) => {
-          console.log(response);
-          console.log(updateUser);
-          setUpdateUser({
-            ...updateUser,
-            name: response.data.name,
-            email: response.data.email,
-            gender: response.data.gender,
-            status: response.data.gender,
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching user list:", error);
-        });
-    }
-  }, []);
-  const handleInputChange = (event) => {
-    setUpdateUser({ ...updateUser, [event.target.name]: event.target.value });
-  };
-  const handleGenderChange = (event) => {
-    setUpdateUser({ ...updateUser, gender: event.target.value });
-  };
-  const handleStatusChange = (event) => {
-    setUpdateUser({ ...updateUser, status: event.target.value });
-  };
-  const handleUpdate = (event) => {
-    event.preventDefault();
-    Axios.put(`public/v2/users/${updateUserId}`, updateUser, {
+    Axios.get("public/v2/users/" + clickedId, {
       headers: {
         Authorization: API_KEY,
       },
     })
       .then((response) => {
-        setUsers([...users, response.data]);
-        alert("Succesfuly updated!");
-        navigate("/");
+        console.log(response);
+        console.log(newUpdateUser);
+        setNewUpdateUser({
+          ...setNewUpdateUser,
+          name: response.data.name,
+          email: response.data.email,
+        });
       })
       .catch((error) => {
         console.error("Error fetching user list:", error);
       });
+  }, [clickedId]);
+
+  const handleInputChange = (event) => {
+    setNewUpdateUser({
+      ...newUpdateUser,
+      [event.target.name]: event.target.value,
+    });
   };
+  const handleGenderChange = (event) => {
+    setNewUpdateUser({ ...newUpdateUser, gender: event.target.value });
+  };
+
+  const handleUpdate = (event) => {
+    event.preventDefault();
+    console.log(newUpdateUser.name);
+
+    if (
+      updatingUser.name !== newUpdateUser.name ||
+      updatingUser.email !== newUpdateUser.email
+    ) {
+      Axios.put(`public/v2/users/${updatingUser.id}`, newUpdateUser, {
+        headers: {
+          Authorization: API_KEY,
+        },
+      })
+        .then((response) => {
+          setUsers([...users, response.data]);
+          alert("Succesfuly updated!");
+        })
+        .catch((error) => {
+          console.error("Error fetching user list:", error);
+        });
+    } else {
+      alert("not made any Changes!");
+    }
+  };
+
   return (
     <div className="update-container">
       <form onSubmit={handleUpdate}>
@@ -77,7 +84,7 @@ const UpdateUserPage = () => {
                 <input
                   placeholder="Name"
                   type="text"
-                  value={updateUser.name}
+                  value={newUpdateUser.name}
                   name="name"
                   onChange={handleInputChange}
                 />
@@ -87,7 +94,7 @@ const UpdateUserPage = () => {
                 <input
                   placeholder="Email"
                   type="email"
-                  value={updateUser.email}
+                  value={newUpdateUser.email}
                   name="email"
                   onChange={handleInputChange}
                 />
@@ -102,6 +109,7 @@ const UpdateUserPage = () => {
                     value="Male"
                     name="gender"
                     onChange={handleGenderChange}
+                    disabled
                   />
                   <label>Male</label>
                 </div>
@@ -111,6 +119,7 @@ const UpdateUserPage = () => {
                     value="female"
                     name="gender"
                     onChange={handleGenderChange}
+                    disabled
                   />
                   <label>Female</label>
                 </div>
@@ -120,28 +129,24 @@ const UpdateUserPage = () => {
               <label>Status:</label>
               <div className="two field">
                 <div className="ui radio checkbox">
-                  <input
-                    type="radio"
-                    value="Active"
-                    name="status"
-                    onChange={handleStatusChange}
-                  />
+                  <input type="radio" value="Active" name="status" disabled />
                   <label>Active</label>
                 </div>
                 <div className="ui radio checkbox">
-                  <input
-                    type="radio"
-                    value="Inactive"
-                    name="status"
-                    onChange={handleStatusChange}
-                  />
+                  <input type="radio" value="Inactive" name="status" disabled />
                   <label>Inactive</label>
                 </div>
               </div>
             </div>
             <div className="two field">
-              <button type="submit" className="btn btn-success">
-                Update
+              <button
+                className="btn btn-success"
+                type="submit"
+                onClick={handleUpdate}
+              >
+                <Link to="/" style={linkStyle}>
+                  Update
+                </Link>
               </button>
               <Link to="/" className="btn btn-secondary">
                 Back
@@ -154,4 +159,4 @@ const UpdateUserPage = () => {
   );
 };
 
-export default UpdateUserPage;
+export default UpdateUser;
