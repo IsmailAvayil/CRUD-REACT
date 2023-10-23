@@ -39,7 +39,7 @@ function AddNewUser() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div className="ui inverted segment">
           <div className="ui segment" style={{ textAlign: "center" }}>
             <h3>Add New User</h3>
@@ -114,9 +114,13 @@ function AddNewUser() {
               </div>
             </div>
             <div>
-              <button type="submit" className="btn btn-success">
-                <Link style={linkStyle} to="/">
-                  Submit
+              <button
+                className="btn btn-success"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                <Link to="/" style={linkStyle}>
+                  Add
                 </Link>
               </button>
             </div>
