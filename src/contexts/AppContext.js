@@ -6,10 +6,13 @@ const AppContextProvider = (props) => {
   const [userId, setUserId] = useState(null);
   const [newUser, setNewUser] = useState({
     name: "",
+    nameError:"",
     email: "",
+    nameEmail:"",
     gender: "",
     status: "",
   });
+  const[errors,setErrors]=useState({nameError:"",errorEmail:""})
   const [currentUser, setCurrentUser] = useState("");
   const [page, setPage] = useState(1);
   const [updatingUser, setUpdatingUser] = useState({ name: "", email: "" });
@@ -19,6 +22,7 @@ const AppContextProvider = (props) => {
     gender: "",
     status: "",
   });
+
   const linkStyle={color:"white",textDecoration:"none"}
 
  
@@ -39,7 +43,8 @@ const AppContextProvider = (props) => {
     setNewUser,
     page,
     setPage,
-    newUpdateUser, setNewUpdateUser
+    newUpdateUser, setNewUpdateUser,
+    errors,setErrors
   };
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>

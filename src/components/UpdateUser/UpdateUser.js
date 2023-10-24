@@ -12,6 +12,7 @@ const UpdateUser = () => {
     updatingUser,
     newUpdateUser,
     setNewUpdateUser,
+    errors,setErrors
   } = useContext(AppContext);
   var clickedId = updatingUser.id;
   console.log(clickedId);
@@ -45,13 +46,46 @@ const UpdateUser = () => {
     setNewUpdateUser({ ...newUpdateUser, gender: event.target.value });
   };
 
+
+  const validateUserName=()=>{
+
+    var letters = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const userName=newUpdateUser.name
+    if(userName.match(letters) && ((userName.length)>3))
+      {
+        setErrors({...errors,nameError:""});
+        return true;
+      }
+    else
+      {
+        setErrors({...errors,nameError:"Name must be valid and more than 3 letters"});
+        setNewUpdateUser({...newUpdateUser,name:""});
+        return false;
+      }
+  }
+
+  const validateUserEmail= ()=>{
+    var mailCharacters=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const userEmail=newUpdateUser.email;
+    if (mailCharacters.test(userEmail)){     
+      setErrors({...errors,errorEmail:""})
+      return (true)
+    }
+    else{
+      setErrors({...errors,errorEmail:"invalid Email"})
+      setNewUpdateUser({...newUpdateUser,email:""});
+      return (false)
+    }
+  }
+  
+
   const handleUpdate = (event) => {
     event.preventDefault();
     console.log(newUpdateUser.name);
 
-    if (
+    if ((
       updatingUser.name !== newUpdateUser.name ||
-      updatingUser.email !== newUpdateUser.email
+      updatingUser.email !== newUpdateUser.email) && (newUpdateUser.name !=="" && newUpdateUser.name!=="")
     ) {
       Axios.put(`public/v2/users/${updatingUser.id}`, newUpdateUser, {
         headers: {
@@ -66,7 +100,7 @@ const UpdateUser = () => {
           console.error("Error fetching user list:", error);
         });
     } else {
-      alert("not made any Changes!");
+      alert("Sorry ,not Updated");
     }
   };
 
@@ -87,7 +121,10 @@ const UpdateUser = () => {
                   value={newUpdateUser.name}
                   name="name"
                   onChange={handleInputChange}
-                />
+                  onBlur={validateUserName}
+                  />
+                  <span id="name-span" style={{color:"red"}}>{errors.nameError}</span>
+              
               </div>
               <div className="field">
                 <label>Email</label>
@@ -97,7 +134,9 @@ const UpdateUser = () => {
                   value={newUpdateUser.email}
                   name="email"
                   onChange={handleInputChange}
-                />
+                  onBlur={validateUserEmail}
+                  />
+                  <span id="email-span" style={{color:"red"}}>{errors.errorEmail}</span>
               </div>
             </div>
             <div className="inline fields">

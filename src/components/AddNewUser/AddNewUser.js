@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../../contexts/AppContext";
 
 function AddNewUser() {
-  const { users, linkStyle, setUsers, newUser, setNewUser } =
+  const { users, linkStyle, setUsers, newUser, setNewUser,errors,setErrors } =
     useContext(AppContext);
 
   const handleInputChange = (event) => {
@@ -18,6 +18,38 @@ function AddNewUser() {
   const handleStatusChange = (event) => {
     setNewUser({ ...newUser, status: event.target.value });
   };
+
+
+  const validateUserName=()=>{
+
+    var letters = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const userName=newUser.name
+    if(userName.match(letters) && ((userName.length)>3))
+      {
+        setErrors({...errors,nameError:""});
+        return true;
+      }
+    else
+      {
+        setErrors({...errors,nameError:"Name must be valid and more than 3 letters"});
+        setNewUser({...newUser,name:""});
+        return false;
+      }
+  }
+
+  const validateUserEmail= ()=>{
+    var mailCharacters=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const userEmail=newUser.email;
+    if (mailCharacters.test(userEmail)){     
+      setErrors({...errors,errorEmail:""})
+      return (true)
+    }
+    else{
+      setErrors({...errors,errorEmail:"invalid Email"})
+      setNewUser({...newUser,email:""});
+      return (false)
+    }
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,7 +70,7 @@ function AddNewUser() {
       }
     }
     else{
-      alert("Not filled Every Columns,so not added")
+      alert("Not filled Every Columns")
     }
 
   };
@@ -60,8 +92,11 @@ function AddNewUser() {
                   value={newUser.name}
                   name="name"
                   onChange={handleInputChange}
-                />
+                  onBlur={validateUserName}
+                  />
+                  <span id="name-span" style={{color:"red"}}>{errors.nameError}</span>
               </div>
+              
               <div className="field">
                 <label>Email</label>
                 <input
@@ -70,7 +105,9 @@ function AddNewUser() {
                   value={newUser.email}
                   name="email"
                   onChange={handleInputChange}
+                  onBlur={validateUserEmail}
                 />
+                <span id="email-span" style={{color:"red"}}>{errors.errorEmail}</span>
               </div>
             </div>
             <div className="inline fields">
